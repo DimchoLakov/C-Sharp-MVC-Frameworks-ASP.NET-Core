@@ -25,6 +25,7 @@ namespace Chushka.Controllers
         }
 
         [Authorize]
+        [ValidateAntiForgeryToken]
         public IActionResult Create(int id)
         {
             var username = this.User.Identity.Name;

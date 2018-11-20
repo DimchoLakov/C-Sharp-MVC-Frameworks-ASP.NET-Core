@@ -34,7 +34,6 @@ namespace Chushka.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel viewModel)
         {
             if (this.ModelState.IsValid)
@@ -63,7 +62,6 @@ namespace Chushka.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel viewModel)
         {
             if (this.ModelState.IsValid && viewModel.Password == viewModel.ConfirmPassword)

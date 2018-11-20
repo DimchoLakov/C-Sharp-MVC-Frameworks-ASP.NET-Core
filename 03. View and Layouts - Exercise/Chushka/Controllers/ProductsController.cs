@@ -47,7 +47,6 @@ namespace Chushka.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateProductViewModel viewModel)
         {
             if (this.ModelState.IsValid)
@@ -93,7 +92,6 @@ namespace Chushka.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public IActionResult Edit(EditDeleteViewModel viewModel)
         {
             var product = this._dbContext
@@ -137,7 +135,6 @@ namespace Chushka.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(EditDeleteViewModel viewModel)
         {
             if (!this.ModelState.IsValid)
