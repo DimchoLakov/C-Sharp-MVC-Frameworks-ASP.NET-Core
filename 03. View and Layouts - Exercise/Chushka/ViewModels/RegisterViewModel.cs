@@ -19,6 +19,7 @@ namespace Chushka.ViewModels
         public string ConfirmPassword { get; set; }
 
         [Required]
+        //[StringLength(maximumLength: 64, ErrorMessage = "Full Name length must be between {2} and {1}", MinimumLength = 2)]
         public string FullName { get; set; }
 
         [Required]
