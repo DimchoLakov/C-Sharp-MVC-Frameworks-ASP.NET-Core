@@ -45,12 +45,10 @@ namespace Chushka.Controllers
                     return this.RedirectToAction("Index", "Home");
                 }
 
-                this.ViewBag.LoginError = "Wrong username or password !";
-                //this.ModelState.AddModelError("LoginError", "Invalid Login attempt");
-                return this.Login();
+                return this.View(viewModel);
             }
 
-            return this.Login();
+            return this.View(viewModel);
         }
 
         public IActionResult Register()
@@ -108,7 +106,7 @@ namespace Chushka.Controllers
                 }
             }
 
-            return this.Register();
+            return this.View(viewModel);
         }
 
         public async Task<IActionResult> Logout()
