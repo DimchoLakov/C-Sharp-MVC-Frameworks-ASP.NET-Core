@@ -65,7 +65,7 @@ namespace Chushka.Data.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     ProductId = table.Column<int>(nullable: false),
                     ClientId = table.Column<string>(nullable: true),
-                    OrderedOn = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2018, 11, 18, 7, 0, 0, 735, DateTimeKind.Utc))
+                    OrderedOn = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2018, 11, 21, 19, 48, 27, 233, DateTimeKind.Utc))
                 },
                 constraints: table =>
                 {

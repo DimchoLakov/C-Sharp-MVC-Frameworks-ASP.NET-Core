@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Chushka.Data.Migrations
 {
     [DbContext(typeof(ChushkaDbContext))]
-    [Migration("20181118070001_InitialCreate")]
+    [Migration("20181121194827_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -31,7 +31,7 @@ namespace Chushka.Data.Migrations
 
                     b.Property<DateTime>("OrderedOn")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValue(new DateTime(2018, 11, 18, 7, 0, 0, 735, DateTimeKind.Utc));
+                        .HasDefaultValue(new DateTime(2018, 11, 21, 19, 48, 27, 233, DateTimeKind.Utc));
 
                     b.Property<int>("ProductId");
 
