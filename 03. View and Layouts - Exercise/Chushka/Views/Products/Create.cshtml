@@ -1,4 +1,4 @@
-﻿@model Chushka.Data.Models.Product
+﻿@model Chushka.ViewModels.CreateProductViewModel
 
 @{
     ViewData["Title"] = "View";
@@ -7,32 +7,24 @@
 <h1 class="text-center">Create Product</h1>
 <hr class="hr-2 bg-dark" />
 <form asp-controller="Products" asp-action="Create" class="mx-auto half-width" method="post">
-    @if (!ViewData.ModelState.IsValid)
-    {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <strong>Please fill all fields.</strong>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    }
+    <div asp-validation-summary="All"></div>
     <div class="form-group">
         <label asp-for="Name">Name</label>
         <input asp-for="Name" class="form-control" placeholder="Name...">
-        <span asp-validation-for="Name" class="alert-danger"></span>
+        <span asp-validation-for="Name" ></span>
     </div>
     <div class="form-group">
         <label asp-for="Price">Price</label>
         <input asp-for="Price" class="form-control" placeholder="Price...">
-        <span asp-validation-for="Price" class="alert-danger"></span>
+        <span asp-validation-for="Price"></span>
     </div>
     <div class="form-group">
         <label asp-for="Description">Description</label>
         <textarea asp-for="Description" class="form-control" rows="4" placeholder="Description..."></textarea>
-        <span asp-validation-for="Description" class="alert-danger"></span>
+        <span asp-validation-for="Description"></span>
     </div>
     <h4 class="text-center">Product Type</h4>
-    <hr class="hr-2 bg-dark half-width mt-4" />
+    <hr class="hr-2 bg-dark half-width mt-4"/>
     <div class="product-type-holder mt-4 d-flex justify-content-around">
         <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" name="Type" id="inlineRadio1" value="Food">
@@ -55,7 +47,7 @@
             <label class="form-check-label" for="inlineRadio5">Other</label>
         </div>
     </div>
-    <hr class="hr-2 bg-dark half-width mt-4" />
+    <hr class="hr-2 bg-dark half-width mt-4"/>
     <div class="button-holder mt-2 d-flex justify-content-center">
         <button type="submit" class="btn chushka-bg-color">Create</button>
     </div>
