@@ -1,9 +1,10 @@
 ﻿using System;
-using System.Linq;
+using System.Threading.Tasks;
 using Chushka.Data;
 using Chushka.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Chushka.Controllers
 {
@@ -17,24 +18,23 @@ namespace Chushka.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        public IActionResult All()
+        public async Task<IActionResult> All()
         {
-            var orders = this._dbContext.Orders.ToList();
+            var orders = await this._dbContext.Orders.ToListAsync();
 
             return this.View(orders);
         }
 
         [Authorize]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create(int id)
+        public async Task<IActionResult> Create(int id)
         {
             var username = this.User.Identity.Name;
-            var user = this._dbContext
+            var user = await this._dbContext
                 .Users
-                .FirstOrDefault(x => x.UserName == username);
-            var product = this._dbContext
+                .FirstOrDefaultAsync(x => x.UserName == username);
+            var product = await this._dbContext
                 .Products
-                .FirstOrDefault(x => x.Id == id);
+                .FirstOrDefaultAsync(x => x.Id == id);
 
             if (user == null || product == null)
             {
@@ -50,12 +50,12 @@ namespace Chushka.Controllers
                 OrderedOn = DateTime.UtcNow
             };
 
-            this._dbContext
+            await this._dbContext
                 .Orders
-                .Add(order);
+                .AddAsync(order);
 
-            this._dbContext
-                .SaveChanges();
+            await this._dbContext
+                .SaveChangesAsync();
 
             if (this.User.IsInRole("Admin"))
             {

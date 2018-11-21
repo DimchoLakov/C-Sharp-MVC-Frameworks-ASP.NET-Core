@@ -68,7 +68,7 @@ namespace Chushka.Controllers
                 return this.RedirectToAction("Index", "Home");
             }
 
-            return this.View();
+            return this.View(viewModel);
         }
 
         [Authorize(Roles = "Admin")]
@@ -88,30 +88,44 @@ namespace Chushka.Controllers
                 return this.RedirectToAction("Index", "Home");
             }
 
-            return this.View(product);
+            var viewModel = new EditViewModel()
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Description = product.Description,
+                Price = product.Price,
+                Type = product.Type
+            };
+
+            return this.View(viewModel);
         }
 
         [HttpPost]
-        public IActionResult Edit(EditDeleteViewModel viewModel)
+        public async Task<IActionResult> Edit(EditViewModel viewModel)
         {
-            var product = this._dbContext
-                .Products
-                .FirstOrDefault(x => x.Id == viewModel.Id);
-
-            if (product == null || !this.ModelState.IsValid)
+            if (this.ModelState.IsValid)
             {
+                var product = await this._dbContext
+                    .Products
+                    .FirstOrDefaultAsync(x => x.Id == viewModel.Id);
+
+                if (product == null)
+                {
+                    return this.RedirectToAction("Index", "Home");
+                }
+
+                product.Type = viewModel.Type;
+                product.Description = viewModel.Description;
+                product.Name = viewModel.Name;
+                product.Price = viewModel.Price;
+
+                this._dbContext.Products.Update(product);
+                await this._dbContext.SaveChangesAsync();
+
                 return this.RedirectToAction("Index", "Home");
             }
 
-            product.Type = (ProductType)Enum.Parse(typeof(ProductType), viewModel.Type);
-            product.Description = viewModel.Description;
-            product.Name = viewModel.Name;
-            product.Price = viewModel.Price;
-
-            this._dbContext.Products.Update(product);
-            this._dbContext.SaveChanges();
-
-            return this.RedirectToAction("Index", "Home");
+            return this.View(viewModel);
         }
 
         [Authorize(Roles = "Admin")]
@@ -131,11 +145,20 @@ namespace Chushka.Controllers
                 return this.RedirectToAction("Index", "Home");
             }
 
-            return this.View(product);
+            var viewModel = new DeleteViewModel()
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Description = product.Description,
+                Price = product.Price,
+                Type = product.Type
+            };
+
+            return this.View(viewModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Delete(EditDeleteViewModel viewModel)
+        public async Task<IActionResult> Delete(DeleteViewModel viewModel)
         {
             if (!this.ModelState.IsValid)
             {
