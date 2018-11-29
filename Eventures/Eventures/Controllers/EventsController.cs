@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using Eventures.Data;
@@ -7,6 +8,7 @@ using Eventures.Web.Filters;
 using Eventures.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Eventures.Web.Controllers
@@ -25,12 +27,13 @@ namespace Eventures.Web.Controllers
         }
 
         [Authorize]
-        public IActionResult All()
+        public async Task<IActionResult> All()
         {
-            var allEvents = this._dbContext
+            var allEvents = await this._dbContext
                 .Events
                 .Select(e => new CreateEventViewModel()
                 {
+                    Id = e.Id,
                     Name = e.Name,
                     Place = e.Place,
                     PricePerTicket = e.PricePerTicket,
@@ -38,9 +41,15 @@ namespace Eventures.Web.Controllers
                     Start = e.Start,
                     End = e.End
                 })
-                .ToList();
-            
-            return View(allEvents);
+                .ToListAsync();
+
+            var viewModel = new CreateEventOrdelViewModel()
+            {
+                CreateEventViewModels = allEvents,
+                CreateOrderViewModel = new CreateOrderViewModel()
+            };
+
+            return View(viewModel);
         }
 
         [Authorize(Roles = "Admin")]
@@ -56,6 +65,9 @@ namespace Eventures.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Preventing creating invalid Id for Event
+                viewModel.Id = null;
+
                 var ev = this._mapper.Map<CreateEventViewModel, Event>(viewModel);
                 await this._dbContext
                     .Events
@@ -70,6 +82,28 @@ namespace Eventures.Web.Controllers
             }
 
             return View(viewModel);
+        }
+
+        [Authorize]
+        public async Task<IActionResult> MyEvents()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            var currentUserEvents = await this._dbContext
+                .Events
+                .Select(x => new MyEventViewModel()
+                {
+                    Name = x.Name,
+                    Start = x.Start,
+                    End = x.End,
+                    Tickets = x.Orders
+                               .Where(o => o.CustomerId == userId)
+                               .Sum(t => t.TicketsCount)
+                })
+                .Distinct()
+                .ToListAsync();
+
+            return View(currentUserEvents);
         }
     }
 }
