@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Eventures.Models
 {
@@ -9,6 +10,7 @@ namespace Eventures.Models
             this.Id = Guid.NewGuid().ToString();
             this.Start = DateTime.UtcNow;
             this.End = DateTime.UtcNow.AddDays(1);
+            this.Orders = new HashSet<Order>();
         }
 
         public string Id { get; set; }
@@ -24,5 +26,7 @@ namespace Eventures.Models
         public int TotalTickets { get; set; }
 
         public decimal PricePerTicket { get; set; }
+
+        public virtual ICollection<Order> Orders { get; set; }
     }
 }

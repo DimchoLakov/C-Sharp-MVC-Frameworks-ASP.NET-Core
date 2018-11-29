@@ -11,5 +11,6 @@ namespace Eventures.Data
         }
         
         public virtual DbSet<Event> Events { get; set; }
+        public virtual DbSet<Order> Orders { get; set; }
     }
 }
