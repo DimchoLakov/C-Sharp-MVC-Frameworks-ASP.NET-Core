@@ -13,18 +13,18 @@ namespace Eventures.Web.MapperProfiles
 
             CreateMap<User, RegisterViewModel>()
                 .ForMember(
-                    dest => dest.Username, 
+                    dest => dest.Username,
                     from => from.MapFrom(src => src.UserName))
                 .ReverseMap();
 
             CreateMap<Order, CreateOrderViewModel>()
                 .ReverseMap();
 
-            //.ForMember(evm => evm.Start,
-            //    e => e.MapFrom(s => s.Start.ToString("dd-MMM-yy hh:mm:ss tt", CultureInfo.InvariantCulture)))
-            //.ForMember(evm => evm.End,
-            //    e => e.MapFrom(s => s.End.ToString("dd-MMM-yy hh:mm:ss tt", CultureInfo.InvariantCulture)))
-            //.ReverseMap();
+            CreateMap<Order, OrderViewModel>()
+                .ForMember(dest => dest.OrderedOn, mapFrom => mapFrom.MapFrom(src => src.OrderedOn))
+                .ForMember(dest => dest.CustomerName, mapFrom => mapFrom.MapFrom(src => src.Customer.UserName))
+                .ForMember(dest => dest.EventName, mapFrom => mapFrom.MapFrom(src => src.Event.Name))
+                .ReverseMap();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -29,20 +30,10 @@ namespace Eventures.Web.Controllers
         [Authorize]
         public async Task<IActionResult> All()
         {
-            var allEvents = await this._dbContext
-                .Events
-                .Select(e => new CreateEventViewModel()
-                {
-                    Id = e.Id,
-                    Name = e.Name,
-                    Place = e.Place,
-                    PricePerTicket = e.PricePerTicket,
-                    TotalTickets = e.TotalTickets,
-                    Start = e.Start,
-                    End = e.End
-                })
-                .ToListAsync();
-
+            var events = await this._dbContext.Events
+                                              .Where(x => x.TotalTickets > 0)
+                                              .ToListAsync();
+            var allEvents = this._mapper.Map<List<Event>, IEnumerable<CreateEventViewModel>>(events);
             var viewModel = new CreateEventOrdelViewModel()
             {
                 CreateEventViewModels = allEvents,
@@ -90,15 +81,17 @@ namespace Eventures.Web.Controllers
             var userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
             var currentUserEvents = await this._dbContext
-                .Events
+                .Users
+                .Where(x => x.Id == userId)
+                .SelectMany(x => x.Orders).Select(x => x.Event)
                 .Select(x => new MyEventViewModel()
                 {
                     Name = x.Name,
                     Start = x.Start,
                     End = x.End,
                     Tickets = x.Orders
-                               .Where(o => o.CustomerId == userId)
-                               .Sum(t => t.TicketsCount)
+                        .Where(o => o.CustomerId == userId)
+                        .Sum(t => t.TicketsCount)
                 })
                 .Distinct()
                 .ToListAsync();

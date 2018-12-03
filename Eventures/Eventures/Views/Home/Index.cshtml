@@ -6,7 +6,7 @@
 {
     <div class="container jumbotron mt-4 bg-info text-center">
         <h1>Greetings, Administrator - @User.Identity.Name!</h1>
-        <hr class="hr-2" />
+        <hr class="hr-2 bg-dark" />
         <h3>Enjoy your work.</h3>
     </div>
 }
@@ -14,7 +14,7 @@ else if (User.Identity.IsAuthenticated)
 {
     <div class="container jumbotron mt-4 bg-info text-center">
         <h1>Welcome, @User.Identity.Name!</h1>
-        <hr class="hr-2" />
+        <hr class="hr-2 bg-dark" />
         <h3>Eventures wishes you an exciting experience!</h3>
     </div>
 }

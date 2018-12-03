@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -28,8 +29,24 @@ namespace Eventures.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var order = this._mapper.Map<CreateOrderViewModel, Order>(viewModel);
+                var currentEvent = await this._dbContext.Events
+                                                        .FirstOrDefaultAsync(x => x.Id == viewModel.EventId);
 
+                if (viewModel.TicketsCount > currentEvent.TotalTickets)
+                {
+                    ModelState.AddModelError(string.Empty, "Event does not have enough tickets!");
+                    return RedirectToAction("All", "Events");
+                }
+
+                //viewModel.TicketsCount = Math.Max(0,
+                //    currentEvent.TotalTickets - (currentEvent.TotalTickets - viewModel.TicketsCount));
+
+                currentEvent.TotalTickets -= viewModel.TicketsCount;
+
+                this._dbContext.Events.Update(currentEvent);
+
+                var order = this._mapper.Map<CreateOrderViewModel, Order>(viewModel);
+                
                 await this._dbContext
                     .Orders
                     .AddAsync(order);
@@ -52,16 +69,12 @@ namespace Eventures.Web.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> All()
         {
-            var allOrders = await this._dbContext
-                .Orders
-                .Select(o => new OrderViewModel()
-                {
-                    EventName = o.Event.Name,
-                    CustomerName = o.Customer.UserName,
-                    OrderedOn = DateTime.UtcNow
-                })
-                .ToListAsync();
+            var orders = await this._dbContext
+                                        .Orders
+                                        .ToListAsync();
 
+            var allOrders = this._mapper.Map<List<Order>, IEnumerable<OrderViewModel>>(orders);
+            allOrders = allOrders.OrderByDescending(x => x.OrderedOn);
             return View(allOrders);
         }
     }

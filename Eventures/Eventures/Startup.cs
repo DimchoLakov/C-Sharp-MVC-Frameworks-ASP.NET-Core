@@ -54,6 +54,13 @@ namespace Eventures.Web
                 .AddEntityFrameworkStores<EventuresDbContext>()
                 .AddDefaultTokenProviders();
 
+            services.AddAuthentication()
+                .AddFacebook(fbOptions =>
+                    {
+                        fbOptions.AppId = Configuration["Authentication:Facebook:AppId"];
+                        fbOptions.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
+                    });
+
             // Add automapper
             var mappingConfig = new MapperConfiguration(mc => { mc.AddProfile(new EventuresProfile()); });
             IMapper mapper = mappingConfig.CreateMapper();
