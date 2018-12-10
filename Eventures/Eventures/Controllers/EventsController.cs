@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -28,16 +29,35 @@ namespace Eventures.Web.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> All()
+        public async Task<IActionResult> All(int? currentPage = 1)
         {
             var events = await this._dbContext.Events
                                               .Where(x => x.TotalTickets > 0)
                                               .ToListAsync();
             var allEvents = this._mapper.Map<List<Event>, IEnumerable<CreateEventViewModel>>(events);
-            var viewModel = new CreateEventOrdelViewModel()
+            var count = events.Count();
+            var size = 10;
+            var totalPages = (int)Math.Ceiling(decimal.Divide(count, size));
+
+            if (currentPage <= 1)
+            {
+                currentPage = 1;
+            }
+            if (currentPage >= totalPages)
+            {
+                currentPage = totalPages;
+            }
+            
+            var skip = (int)(currentPage - 1) * size;
+            var take = size;
+           
+            allEvents = allEvents.Skip(skip).Take(take).ToList();
+
+            var viewModel = new CreateEventOrderViewModel()
             {
                 CreateEventViewModels = allEvents,
-                CreateOrderViewModel = new CreateOrderViewModel()
+                CreateOrderViewModel = new CreateOrderViewModel(),
+                CurrentPage = (int)currentPage
             };
 
             return View(viewModel);
