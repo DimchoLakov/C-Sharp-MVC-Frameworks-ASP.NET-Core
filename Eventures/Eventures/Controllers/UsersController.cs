@@ -188,5 +188,61 @@ namespace Eventures.Web.Controllers
             var properties = _signInManager.ConfigureExternalAuthenticationProperties("Facebook", Url.Action("ExternalLoginCallback", "Users"));
             return Challenge(properties, provider);
         }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AllUsers()
+        {
+            var allUsers = await this._dbContext
+                .Users
+                .Select(x => new UserViewModel()
+                {
+                    Id = x.Id,
+                    Username = x.UserName
+                })
+                .ToListAsync();
+
+            return View(allUsers);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> PromoteUser(UserIdViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await this._userManager.Users.FirstOrDefaultAsync(x => x.Id == model.Id);
+
+                var role = await this._userManager.GetRolesAsync(user);
+
+                var userRole = await this._dbContext.UserRoles.FirstOrDefaultAsync(ur => ur.UserId == model.Id);
+                this._dbContext.UserRoles.Remove(userRole);
+
+                await this._userManager.AddToRoleAsync(user, "Admin");
+
+                return RedirectToAction("AllUsers", "Users");
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> DemoteUser(UserIdViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await this._userManager.Users.FirstOrDefaultAsync(x => x.Id == model.Id);
+
+                var role = await this._userManager.GetRolesAsync(user);
+
+                var userRole = await this._dbContext.UserRoles.FirstOrDefaultAsync(x => x.UserId == model.Id);
+                this._dbContext.UserRoles.Remove(userRole);
+
+                await this._userManager.AddToRoleAsync(user, "User");
+
+                return RedirectToAction("AllUsers", "Users");
+            }
+
+            return RedirectToAction("Index", "Home");
+        }
     }
 }
