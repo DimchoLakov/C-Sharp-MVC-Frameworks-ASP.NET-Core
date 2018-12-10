@@ -57,6 +57,8 @@ namespace Eventures.Web
             services.AddAuthentication()
                 .AddFacebook(fbOptions =>
                     {
+                        // Change manually AppId and AppSecret in order to run the App and have external login with FB
+                        // Right click on Eventures.Web --> Manage User Secrets
                         fbOptions.AppId = Configuration["Authentication:Facebook:AppId"];
                         fbOptions.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
                     });
