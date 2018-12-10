@@ -7,6 +7,8 @@ namespace Eventures.Web.ViewModels
         public CreateEventOrderViewModel()
         {
             this.CurrentPage = 1;
+            this.FirstPage = 1;
+            this.LastPage = 1;
         }
 
         public IEnumerable<CreateEventViewModel> CreateEventViewModels { get; set; }
@@ -14,5 +16,9 @@ namespace Eventures.Web.ViewModels
         public CreateOrderViewModel CreateOrderViewModel { get; set; }
 
         public int CurrentPage { get; set; }
+
+        public int FirstPage { get; set; }
+
+        public int LastPage { get; set; }
     }
 }

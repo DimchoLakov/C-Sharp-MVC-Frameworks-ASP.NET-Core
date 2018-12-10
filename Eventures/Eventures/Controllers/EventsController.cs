@@ -57,7 +57,9 @@ namespace Eventures.Web.Controllers
             {
                 CreateEventViewModels = allEvents,
                 CreateOrderViewModel = new CreateOrderViewModel(),
-                CurrentPage = (int)currentPage
+                CurrentPage = (int)currentPage,
+                FirstPage = 1,
+                LastPage = totalPages
             };
 
             return View(viewModel);
